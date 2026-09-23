@@ -1,0 +1,206 @@
+-------------------------------Part – A: -------------------------------
+
+--1. Display all students whose SPI is greater than 8. 
+
+WITH CTE AS(
+SELECT * FROM STUDENT
+)
+
+SELECT * FROM CTE
+WHERE PERFORMANCE >8
+
+--2. Display average SPI of all students. 
+
+WITH CTE AS(
+SELECT AVG(PERFORMANCE) AS AVG_SPI  FROM STUDENT
+)
+
+SELECT * FROM CTE
+
+--3. Display total number of students in each branch. 
+
+WITH CTE AS(
+SELECT BRANCH, COUNT(*) AS COUNT_STDI  FROM STUDENT
+GROUP BY BRANCH
+
+)
+SELECT * FROM CTE
+
+--4. Display students who belong to RAJKOT city. 
+
+WITH CTE AS (
+SELECT * FROM STUDENT AS CITY_NAME
+)
+SELECT * FROM CTE
+WHERE CITY = 'RAJKOT'
+
+--5. Find branch names that appear more than once. 
+
+WITH CTE AS (
+SELECT BRANCH, COUNT(*)  AS BRANCH_NAME FROM STUDENT
+GROUP BY BRANCH
+)
+SELECT * FROM CTE
+
+WHERE BRANCH_NAME > 1
+
+--6. Display row number for each student.
+
+WITH CTE AS (
+    SELECT STDID, SNAME, BRANCH,
+           ROW_NUMBER() OVER (ORDER BY STDID) AS ROW_NUM
+    FROM STUDENT
+)
+SELECT * FROM CTE;
+
+--7. Display top 3 students based on SPI. 
+
+WITH CTE AS(
+SELECT SNAME,STDID,BRANCH,PERFORMANCE,
+ROW_NUMBER() OVER (ORDER BY PERFORMANCE DESC) AS PER_TOP
+FROM STUDENT
+)
+SELECT * FROM CTE
+WHERE PER_TOP <= 3
+
+--8. Display students having maximum SPI. 
+
+WITH CTE AS (
+    SELECT MAX(PERFORMANCE) AS MAX_SPI FROM STUDENT
+)
+SELECT * FROM CTE
+
+--9. Display students having minimum SPI. 
+
+WITH CTE AS (
+    SELECT MIN(PERFORMANCE) AS MIN_SPI FROM STUDENT
+)
+SELECT * FROM CTE
+
+--10. Display branch -wise rank of students.
+
+WITH CTE AS (
+    SELECT SNAME,BRANCH,PERFORMANCE, ROW_NUMBER() OVER (PARTITION BY BRANCH ORDER BY BRANCH) AS BRA_RAN FROM STUDENT
+)
+SELECT * FROM CTE
+ 
+-------------------------------Part – B: -------------------------------
+
+--11. Display students SPI average belonging to Computer branch. 
+
+WITH CTE AS (
+SELECT AVG(PERFORMANCE) AS AVG_SPI FROM STUDENT
+WHERE BRANCH = 'COMPUTER'
+)
+SELECT * FROM CTE
+
+--12. Display students whose SPI is greater than average SPI of his/her branch. 
+
+WITH CTE AS (
+    SELECT BRANCH, AVG(PERFORMANCE) AS AVG_SPI
+    FROM STUDENT
+    GROUP BY BRANCH
+)
+SELECT * FROM STUDENT S
+JOIN CTE C
+ON S.BRANCH = C.BRANCH
+WHERE S.PERFORMANCE > C.AVG_SPI;
+
+--13. Display branch having more than 2 students. 
+
+WITH CTE AS (
+    SELECT BRANCH, COUNT(STDID) AS STUDENT_COUNT
+    FROM STUDENT
+    GROUP BY BRANCH
+)
+SELECT BRANCH
+FROM CTE
+WHERE STUDENT_COUNT > 2;
+
+--14. Display branches having average SPI between 7 and 9 
+
+WITH CTE AS (
+    SELECT BRANCH, AVG(PERFORMANCE) AS STUDENT_PER
+    FROM STUDENT
+    GROUP BY BRANCH
+)
+SELECT *
+FROM CTE
+WHERE STUDENT_PER BETWEEN 7 AND 9;
+
+--15. Display students whose SPI is lower than overall average SPI. 
+
+WITH CTE AS (
+    SELECT BRANCH, AVG(PERFORMANCE) AS AVG_SPI
+    FROM STUDENT
+    GROUP BY BRANCH
+)
+SELECT * FROM STUDENT S
+JOIN CTE C
+ON S.BRANCH = C.BRANCH
+WHERE S.PERFORMANCE < C.AVG_SPI;
+
+-------------------------------Part – C: -------------------------------
+
+--16. Display branches having exactly one student. 
+
+WITH CTE AS (
+    SELECT BRANCH, COUNT(STDID) AS STUDENT_COUNT
+    FROM STUDENT
+    GROUP BY BRANCH
+)
+SELECT * FROM CTE
+WHERE STUDENT_COUNT = 1;
+
+--17. Display branch having highest average SPI. 
+
+WITH CTE AS
+(
+    SELECT BRANCH,AVG(PERFORMANCE) AS AVGSPI FROM STUDENT
+    GROUP BY BRANCH
+)
+SELECT * FROM CTE
+WHERE AVGSPI = (
+    SELECT MAX(AVGSPI)
+    FROM CTE
+)
+
+--18. Display branch having lowest average SPI. 
+
+WITH CTE AS
+(
+    SELECT BRANCH,AVG(PERFORMANCE) AS AVGSPI FROM STUDENT
+    GROUP BY BRANCH
+),
+CTE2 AS
+(
+    SELECT MIN(AVGSPI) AS MINAVG
+    FROM CTE
+)
+SELECT CTE. * FROM CTE,CTE2
+WHERE CTE.AVGSPI = CTE2.MINAVG
+--19. Display students whose SPI is lower than branch average SPI. 
+WITH CTE AS
+(
+    SELECT *,
+    AVG(PERFORMANCE) OVER (PARTITION BY BRANCH) AS BRANCH_AVG
+    FROM STUDENT
+)
+SELECT * FROM CTE
+WHERE PERFORMANCE < BRANCH_AVG
+
+--20. Display branches having maximum number of students. 
+
+WITH CTE AS
+(
+    SELECT BRANCH,COUNT(*) AS TOTAL
+    FROM STUDENT
+    GROUP BY BRANCH
+),
+CTE2 AS
+(
+    SELECT MAX(TOTAL) AS MAXTOTAL
+    FROM CTE
+)
+SELECT CTE.* FROM CTE,CTE2
+WHERE CTE.TOTAL = CTE2.MAXTOTAL

@@ -1,0 +1,167 @@
+
+----------------------------------Part – A:----------------------------------  
+--1. Implement scalar function to return "Welcome to DBMS Lab". 
+
+CREATE FUNCTION FUN_WELMASS()
+RETURNS VARCHAR(50)
+AS
+BEGIN
+    RETURN 'Welcome to DBMS Lab';
+END;
+SELECT DBO.FUN_WELMASS();
+
+--2. Implement scalar function to calculate simple interest. 
+
+CREATE OR ALTER FUNCTION CAL_INT
+(
+    @P INT,
+    @R INT,
+    @T INT
+)
+RETURNS INT
+AS
+BEGIN
+   
+    RETURN (@P * @R * @T) / 100.00;
+    
+END;
+SELECT DBO.CAL_INT(7,9,8);
+
+--3. Implement scalar function to find difference in days between two dates.
+
+CREATE OR ALTER FUNCTION DBTD
+(
+    @SD DATE,
+    @ED DATE
+)
+RETURNS INT 
+AS
+BEGIN
+   RETURN DATEDIFF(DAY, @SD, @ED);
+END;
+
+SELECT DBO.DBTD('2008-06-12','2008-06-11');
+
+--4. Implement scalar function to check whether number is odd or even. 
+
+CREATE OR ALTER FUNCTION OE
+(
+@NUM INT
+)
+RETURNS VARCHAR(50)
+
+AS
+BEGIN
+
+IF @NUM %2 = 0
+RETURN 'EVEN NUMBER'
+
+RETURN 'ODD NUMBER'
+
+END;
+
+SELECT DBO.OE(6)
+
+-- 5. Implement scalar function to print numbers from 1 to N.
+CREATE OR ALTER FUNCTION FN_PRINT_NUMBERS_UPTO_N
+(@N INT)
+RETURNS INT
+AS
+BEGIN
+    DECLARE @RESULT AS INT = 0;
+    DECLARE @I AS INT = 1;
+    WHILE @I <= @N
+        BEGIN
+            SET @RESULT = @RESULT + @I;
+            SET @I = @I + 1;
+        END
+    RETURN @RESULT;
+END
+
+SELECT DBO.FN_PRINT_NUMBERS_UPTO_N(10) AS NUMBERS_UPTO_N;
+
+----------------------------------PART-C----------------------------------
+-- 10. Implement scalar function to return employee full details using EID.
+CREATE FUNCTION FN_EMPLOYEE_DETAILS_BY_EID
+(@EID INT)
+RETURNS TABLE 
+AS
+
+BEGIN
+
+RETURN 
+    (SELECT * FROM   EMPLOYEE
+     WHERE  EID = @EID)
+
+END;
+SELECT * FROM   DBO.FN_EMPLOYEE_DETAILS_BY_EID(101);
+
+-- 11. Implement scalar function to return highest salary from a given department.
+CREATE OR ALTER FUNCTION FN_HIGHEST_SALARY_BY_DEPT
+(@DEPARTMENT VARCHAR (50))
+RETURNS FLOAT
+AS
+BEGIN
+    DECLARE @HIGHEST_SALARY AS FLOAT;
+    SELECT @HIGHEST_SALARY = MAX(SALARY)
+    FROM   EMPLOYEE
+    WHERE  DEPARTMENT = @DEPARTMENT;
+    RETURN @HIGHEST_SALARY;
+END
+
+SELECT DBO.FN_HIGHEST_SALARY_BY_DEPT('IT') AS HIGHEST_SALARY_IN_IT_DEPT;
+
+-- 12. Implement scalar function to count total employees in EMPLOYEE table.
+CREATE OR ALTER FUNCTION FN_TOTAL_EMPLOYEES
+( )
+RETURNS INT
+AS
+BEGIN
+    DECLARE @TOTAL_EMPLOYEES AS INT;
+    SELECT @TOTAL_EMPLOYEES = COUNT(*)
+    FROM   EMPLOYEE;
+    RETURN @TOTAL_EMPLOYEES;
+END
+
+SELECT DBO.FN_TOTAL_EMPLOYEES() AS TOTAL_EMPLOYEES_IN_EMPLOYEE_TABLE;
+
+-- 13. Implement scalar function to find total experience of employee using JoiningYear.
+CREATE OR ALTER FUNCTION FN_TOTAL_EXPERIENCE_BY_JOINING_YEAR
+(@JOINING_YEAR INT)
+RETURNS INT
+AS
+BEGIN
+    DECLARE @CURRENT_YEAR AS INT = YEAR(GETDATE());
+    DECLARE @TOTAL_EXPERIENCE AS INT;
+    SET @TOTAL_EXPERIENCE = @CURRENT_YEAR - @JOINING_YEAR;
+    RETURN @TOTAL_EXPERIENCE;
+END;
+SELECT DBO.FN_TOTAL_EXPERIENCE_BY_JOINING_YEAR(2015) AS TOTAL_EXPERIENCE;
+
+-- 14. Implement scalar function to return total number of employees in a given department.
+CREATE OR ALTER FUNCTION FN_TOTAL_EMPLOYEES_BY_DEPT
+(@DEPARTMENT VARCHAR (50))
+RETURNS INT
+AS
+BEGIN
+    DECLARE @TOTAL_EMPLOYEES AS INT;
+    SELECT @TOTAL_EMPLOYEES = COUNT(*)
+    FROM   EMPLOYEE
+    WHERE  DEPARTMENT = @DEPARTMENT;
+    RETURN @TOTAL_EMPLOYEES;
+END;
+SELECT DBO.FN_TOTAL_EMPLOYEES_BY_DEPT('IT') AS TOTAL_EMPLOYEES_IN_IT_DEPT;
+
+-- 15. Implement scalar function to count total employees from a given city.
+CREATE OR ALTER FUNCTION FN_TOTAL_EMPLOYEES_BY_CITY
+(@CITY VARCHAR (50))
+RETURNS INT
+AS
+BEGIN
+    DECLARE @TOTAL_EMPLOYEES AS INT;
+    SELECT @TOTAL_EMPLOYEES = COUNT(*)
+    FROM   EMPLOYEE
+    WHERE  CITY = @CITY;
+    RETURN @TOTAL_EMPLOYEES;
+END;
+SELECT DBO.FN_TOTAL_EMPLOYEES_BY_CITY('RAJKOT') AS TOTAL_EMPLOYEES_IN_RAJPUR_CITY;
